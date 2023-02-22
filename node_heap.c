@@ -5,8 +5,9 @@
 /// create an application-specific, minimum-ordered heap, whose
 /// implementation is tailored to the variable-length coding application.
 
+#include <stdio.h>
 #include <string.h>
-#include <node_heap.h>
+#include "node_heap.h"
 
 /// NUL is the 0, or null character, in ASCII code representation.
 ///
@@ -25,6 +26,14 @@
 #define MAX_CODE 32
 
 
+
+///int compare_node(Heap * heap, int child, int father) {
+///    return 4;
+///}
+
+
+
+
 /// read_symbols reads characters from standard input, calculates
 /// each symbol's frequency of appearance, and counts the number of
 /// distinct symbols it sees.
@@ -36,24 +45,24 @@
 /// @post  unused syms array entries are initialized as unused.
 ///
 int read_symbols(size_t maxcount, Symbol syms[]) {
-    int pos = 0;
+    size_t pos = 0;
     char present;
-    while ((present = fgetc(stdin)) != null) {
+    while ((present = fgetc(stdin)) != NUL) {
         
         /// If the current character has been seen before
-        bool exists = false;
+        int exists = 0;
 
         /// Where in syms[] the character has been seen, if available.
         int existsWhere;
         
-        for (size_t i = 0; i < pos; i ++) {
+        for (size_t i = 0; i < maxcount; i ++) {
             if (syms[i].symbol == present) {
-                exists = true;
+                exists = 1;
                 existsWhere = i;
                 break;
             }
         }
-        if (exists) {
+        if (exists == 1) {
             syms[existsWhere].frequency ++;
         } else {
             syms[pos].frequency = 1;
@@ -63,6 +72,7 @@ int read_symbols(size_t maxcount, Symbol syms[]) {
             syms[pos].symbol = present;
             pos++;
         }
+
     }
     return pos;
 }
@@ -90,6 +100,7 @@ void heap_init(Heap * heap) {
             for (int k = 0; k < MAX_CODE; k++) {
                 heap -> array[i].syms[j].codeword[k] = NUL;
             }
+        }
     }
 }
 
@@ -147,9 +158,9 @@ int childr(int i) {
 void heap_make( Heap * heap, size_t length, Symbol symlist[] ) {
     /// converts symlist to a populated array.
     heap -> size = length;
-    read_symbols(MAX_COUNT, symlist[]);
+    //read_symbols(MAX_COUNT, symlist[]);
     /// this loop will determine the location we're seeking.
-    for (int i = 0; i < length; i ++) {
+    for (size_t i = 0; i < length; i ++) {
         Symbol holster = symlist[i];
         heap -> array[i].syms[0] = holster;
         int place_one = i;
@@ -159,7 +170,7 @@ void heap_make( Heap * heap, size_t length, Symbol symlist[] ) {
         /// otherwise, the process is complete and we can break out of the loop.
         while (place != -1) {
             if (heap -> array[place_one].syms[0].frequency < heap -> array[place].syms[0].frequency) {
-                hoslter = array[place].syms[0].frequency;
+                holster = heap -> array[place_one].syms[0];
                 heap -> array[place_one].syms[0] = heap -> array[place].syms[0];
                 heap -> array[place].syms[0] = holster;
                 place_one = place;
@@ -170,6 +181,52 @@ void heap_make( Heap * heap, size_t length, Symbol symlist[] ) {
         }
     }
 }
+
+
+
+
+
+/// heap_add adds one more node to the current heap.
+/// heap_add replaces what is expected to be an unused Node entry.
+/// @param heap pointer to an initialized heap structure being built
+/// @param node a Node structure instance to add into the heap
+/// @pre  heap->size < heap->capacity (fatal error to exceed heap capacity)
+/// @post  heap->size has increased by 1.
+/// @post  heap->array is in heap order.
+/// <p>algorithm:
+/// Since the heap->array is fixed capacity, heap_add cannot enlarge it;
+/// instead the add overwrites an unused node in the heap structure.
+/// The add puts the node's values into the next location in the heap's array.
+/// <p>
+/// After assigning the values, heap_add restores heap order
+/// by sifting the last entry up the heap from the last location.
+/// Finally it increments the size of the heap.
+/// <p>
+/// If there is no room for more nodes, then it is a fatal error.
+/// However, the array is sized to hold enough nodes for all the symbols
+/// it can encounter.
+///
+void heap_add( Heap * heap, Node node ) {
+    heap -> array[heap -> size] = node;
+    int father = parent(heap -> size);
+    int meen = heap -> size;
+    while (father >= 0) {
+        if (heap -> array[meen].frequency < heap -> array[father].frequency) {
+            Node placeholder = heap -> array[meen];
+            heap -> array[meen] = heap -> array[father];
+            heap -> array[father] = placeholder;
+            meen = father;
+            father = parent(father);
+        } else {
+            break;
+        }
+    }
+    heap -> size ++;
+}
+
+
+
+
 
 
 /// heap_remove removes and returns a node structure.
@@ -196,38 +253,46 @@ void heap_make( Heap * heap, size_t length, Symbol symlist[] ) {
 ///
 Node heap_remove( Heap * heap ) {
     /// this doesn't seem to complicated unless i'm absolutely butchering the idea behind it.
-    Symbol lowest = heap -> array[0].syms[0];
+    Node lowest = heap -> array[0];
     /// possible - I don't know how data is stored. heap -> size could be 1 greater than what I want.
-    heap -> array[0].syms[0] = heap -> array[heap -> size].syms[0];
+    heap -> array[0] = heap -> array[heap -> size - 1];
+    Node k;
+    k.frequency = 0;
+    heap -> array[heap -> size] = k;
     heap -> size --;
-    int position = 0;
+    size_t position = 0;
     while (position < heap-> size) {
-        Symbol this = heap -> array[position].syms[0];
+        Node this = heap -> array[position];
         int left = childl(position);
         int right = childr(position);
-        Symbol left_node = heap -> array[left].syms[0];
-        Symbol right_node = heap -> array[right].syms[0];
-        Symbol comparison;
-        int left = 0;
-        if (left_node.frequency < right_node.frequency) {
+        Node left_node = heap -> array[left];
+        Node right_node = heap -> array[right];
+        Node comparison;
+        int lefty = 0;
+        if (left_node.frequency < right_node.frequency && left_node.frequency != 0) {
             comparison = left_node;
         } else {
             comparison = right_node;
-            left = 1;
+            lefty = 1;
         }
-        if (comparison.frequency < this.frequency) {
-            heap -> array[position].syms[0] = comparison;
-            if (left == 1) {
-                heap -> array[right].syms[0] = this;
+        if (right_node.frequency == 0) {
+            comparison = left_node;
+            lefty = 0;
+        }
+        if (comparison.frequency < this.frequency && comparison.frequency != 0) {
+            heap -> array[position] = comparison;
+            if (lefty == 1) {
+                heap -> array[right] = this;
                 position = right;
             } else {
-                heap -> array[left].syms[0] = this;
+                heap -> array[left] = this;
                 position  = left;
             }
         }  else {
             break;
         }
     }
+    return(lowest);
 }
 
 
