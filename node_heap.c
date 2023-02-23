@@ -47,18 +47,20 @@
 int read_symbols(size_t maxcount, Symbol syms[]) {
     size_t pos = 0;
     char present;
-    /// for some reason, this is causing a core segmentation dump. why?
+    int new_line = -1;    
     while ((present = fgetc(stdin)) != EOF) {
         /// If the current character has been seen before
         int exists = 0;
 
         /// Where in syms[] the character has been seen, if available.
         int existsWhere;
-        
         for (size_t i = 0; i < maxcount; i ++) {
             if (syms[i].symbol == present) {
                 exists = 1;
                 existsWhere = i;
+                break;
+            }
+            if (syms[i].symbol == NUL) {
                 break;
             }
         }
@@ -67,14 +69,15 @@ int read_symbols(size_t maxcount, Symbol syms[]) {
         } else {
             syms[pos].frequency = 1;
             if (present == '\n') {
-                syms[pos].frequency = 0;
+                new_line = pos;
             }
             syms[pos].symbol = present;
             pos++;
         }
 
     }
-    return pos;
+    syms[new_line].frequency --;
+    return (pos);
 }
 
 
@@ -161,8 +164,11 @@ void heap_make( Heap * heap, size_t length, Symbol symlist[] ) {
     //read_symbols(MAX_COUNT, symlist[]);
     /// this loop will determine the location we're seeking.
     for (size_t i = 0; i < length; i ++) {
-        Symbol holster = symlist[i];
-        heap -> array[i].syms[0] = holster;
+        Node holster;
+        holster.syms[0] = symlist[i];
+        holster.frequency = holster.syms[0].frequency;
+        holster.num_valid = 1;
+        heap -> array[i] = holster;
         int place_one = i;
         int place = parent(i);
         /// logic here?
@@ -170,9 +176,9 @@ void heap_make( Heap * heap, size_t length, Symbol symlist[] ) {
         /// otherwise, the process is complete and we can break out of the loop.
         while (place != -1) {
             if (heap -> array[place_one].syms[0].frequency < heap -> array[place].syms[0].frequency) {
-                holster = heap -> array[place_one].syms[0];
-                heap -> array[place_one].syms[0] = heap -> array[place].syms[0];
-                heap -> array[place].syms[0] = holster;
+                holster = heap -> array[place_one];
+                heap -> array[place_one] = heap -> array[place];
+                heap -> array[place] = holster;
                 place_one = place;
                 place = parent(place);
             } else {
