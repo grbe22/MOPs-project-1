@@ -57,8 +57,8 @@ int main(void) {
         heap_add(&heap, replacement);
     }
     /// now we printin'
-    printf("Penis");
     Node final_node = heap_remove(&heap);
+    printf("%lu", final_node.num_valid);
     for (size_t i = 0; i < final_node.num_valid; i++) {
         printf("symbol: '%c'\tfrequency:\t\t'%lu'\tcodeword:\tNUL\n", final_node.syms[i].symbol, final_node.syms[i].frequency);
     }
