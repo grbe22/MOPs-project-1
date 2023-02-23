@@ -12,7 +12,7 @@
 #define MAX_CODE 32
 #define NUL     '\0'
 
-void reversal(char string[]) {
+static void reversal(char string[]) {
     int k = strlen(string);
     for (int i = 0; i < k / 2; i ++) {
         char ph = string[i];
@@ -21,7 +21,7 @@ void reversal(char string[]) {
     }
 }
 
-void prepend(char string[], size_t length) {
+static void prepend(char string[], size_t length) {
     /// our objective is to add spaces to the front of the string until size == length.
     int difference = length - strlen(string) + 1;
     for (int i = strlen(string) - 1; i >= 0; i --) {
@@ -32,16 +32,20 @@ void prepend(char string[], size_t length) {
     }
 }
 
-int basic_log(int length) {
+static int basic_log(int length) {
     int two = 2;
+    if (length == 0) {
+        return -1;
+    }
     for (int i = 1; i <= 8; i++) {
-        if (two > length) {
+        if (two >= length) {
             return (i);
         } else {
             /// :3
             two = two + two;
         }
     }
+    return -1;
 }
 
 
@@ -90,16 +94,22 @@ int main(void) {
 
         heap_add(&heap, replacement);
     }
+    Node final_node;
     /// now we printin'
-    Node final_node = heap_remove(&heap);
-    
-    int code_len = 0;
+    if (heap.size == 0) {
+        final_node.frequency = 0;
+        final_node.num_valid = 0;
+    } else {
+        final_node = heap_remove(&heap);
+    }
+    size_t code_len = 0;
     for (size_t i = 0; i < final_node.num_valid; i++) {
         if (strlen(final_node.syms[i].codeword) > code_len) {
             code_len = strlen(final_node.syms[i].codeword);
         }
     }
-    
+    printf("Variable Length Code Information\n================================\n");
+
     int total_bytes = 0;
     int total_characters = 0;
     /// code_len is the size of the longest string.
@@ -130,9 +140,13 @@ int main(void) {
     float avg = (float)(total_bytes) / (float)(total_characters);
     printf("Average VLC code length:\t%.4f\n", avg);
     int avg2 = basic_log(final_node.num_valid);
-    printf("Fixed length code length:\t%.4f\n", (float)(avg2));
-    printf("Longest variable code length:\t%d\n", code_len);
+    if (avg2 == -1) {
+        printf("Fixed length code length:\t-inf\n");
+    } else {
+        printf("Fixed length code length:\t%.4f\n", (float)(avg2));
+    }
+    printf("Longest variable code length:\t%ld\n", code_len);
     printf("Node cumulative frequency:\t%d\n", total_characters);
-    printf("Number of distinct symbols:\t%ld\n\n", final_node.num_valid);
+    printf("Number of distinct symbols:\t%ld\n", final_node.num_valid);
 }
 
