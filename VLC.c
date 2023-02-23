@@ -32,6 +32,19 @@ void prepend(char string[], size_t length) {
     }
 }
 
+int basic_log(int length) {
+    int two = 2;
+    for (int i = 1; i <= 8; i++) {
+        if (two > length) {
+            return (i);
+        } else {
+            /// :3
+            two = two + two;
+        }
+    }
+}
+
+
 int main(void) {
     static Heap heap;
     heap_init(&heap);
@@ -87,14 +100,18 @@ int main(void) {
         }
     }
     
+    int total_bytes = 0;
+    int total_characters = 0;
     /// code_len is the size of the longest string.
     for (size_t i = 0; i < final_node.num_valid; i++) {
         Symbol man = final_node.syms[i];
         /// printf("Codeword: %s\n", man.codeword);
         /// 2/23/23: Everything except this reversal works just peachy. Why.
         /// this loop runs from start to finish.
+        total_bytes += man.frequency * strlen(man.codeword);
         reversal(man.codeword);
         prepend(man.codeword, code_len);
+        total_characters += man.frequency;
         if (man.symbol > 127) {
             printf("symbol: '0x%x'\tfrequency:\t\t%lu\tcodeword:%s\n", man.symbol, man.frequency, man.codeword);
         } else {
@@ -109,6 +126,13 @@ int main(void) {
             printf("'\tfrequency:\t\t%lu\tcodeword:%s\n", man.frequency, man.codeword);
         }
     }
-
+    printf("\n");
+    float avg = (float)(total_bytes) / (float)(total_characters);
+    printf("Average VLC code length:\t%.4f\n", avg);
+    int avg2 = basic_log(final_node.num_valid);
+    printf("Fixed length code length:\t%.4f\n", (float)(avg2));
+    printf("Longest variable code length:\t%d\n", code_len);
+    printf("Node cumulative frequency:\t%d\n", total_characters);
+    printf("Number of distinct symbols:\t%ld\n\n", final_node.num_valid);
 }
 
