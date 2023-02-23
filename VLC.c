@@ -12,12 +12,33 @@
 #define MAX_CODE 32
 #define NUL     '\0'
 
+void reversal(char string[]) {
+    int k = strlen(string);
+    for (int i = 0; i < k / 2; i ++) {
+        char ph = string[i];
+        string[i] = string[k-i-1];
+        string[k-i-1] = ph;
+    }
+}
+
+void prepend(char string[], size_t length) {
+    /// our objective is to add spaces to the front of the string until size == length.
+    int difference = length - strlen(string) + 1;
+    for (int i = strlen(string) - 1; i >= 0; i --) {
+        string[i + difference] = string[i];
+    }
+    for (int i = 0; i < difference; i ++) {
+        string[i] = ' ';
+    }
+}
+
 int main(void) {
     static Heap heap;
     heap_init(&heap);
     static Symbol symbols[MAXSYMS];
 
-    read_symbols(MAXSYMS, symbols);
+    int length_of_heap = read_symbols(MAXSYMS, symbols);
+    heap_make(&heap, length_of_heap, symbols);
     
     while (heap.size > 1) {
         Node lowest = heap_remove(&heap);
@@ -36,7 +57,7 @@ int main(void) {
         for (size_t i = 0; i <  sec_lowest.num_valid; i ++) {
             for (size_t j = 0; j < MAX_CODE; j++) {
                 if (sec_lowest.syms[i].codeword[j] == NUL) {
-                    sec_lowest.syms[i].codeword[j] = '0';
+                    sec_lowest.syms[i].codeword[j] = '1';
                     break;
                 }
             }
@@ -50,17 +71,43 @@ int main(void) {
         for (size_t i = 0; i < lowest.num_valid; i ++) {
             replacement.syms[i] = lowest.syms[i];
         }
-        for (size_t j = 0; j < sec_lowest.num_valid; j++) {
-            replacement.syms[lowest.num_valid + j - 1] = sec_lowest.syms[j];
+        for (size_t j = lowest.num_valid; j < replacement.num_valid; j++) {
+            replacement.syms[j] = sec_lowest.syms[j - lowest.num_valid];
         }
 
         heap_add(&heap, replacement);
     }
     /// now we printin'
     Node final_node = heap_remove(&heap);
-    printf("%lu", final_node.num_valid);
+    
+    int code_len = 0;
     for (size_t i = 0; i < final_node.num_valid; i++) {
-        printf("symbol: '%c'\tfrequency:\t\t'%lu'\tcodeword:\tNUL\n", final_node.syms[i].symbol, final_node.syms[i].frequency);
+        if (strlen(final_node.syms[i].codeword) > code_len) {
+            code_len = strlen(final_node.syms[i].codeword);
+        }
+    }
+    
+    /// code_len is the size of the longest string.
+    for (size_t i = 0; i < final_node.num_valid; i++) {
+        Symbol man = final_node.syms[i];
+        /// printf("Codeword: %s\n", man.codeword);
+        /// 2/23/23: Everything except this reversal works just peachy. Why.
+        /// this loop runs from start to finish.
+        reversal(man.codeword);
+        prepend(man.codeword, code_len);
+        if (man.symbol > 127) {
+            printf("symbol: '0x%x'\tfrequency:\t\t%lu\tcodeword:%s\n", man.symbol, man.frequency, man.codeword);
+        } else {
+            printf("symbol: '");
+            if (man.symbol == '\n') {
+                printf("\\n");
+            } else if (man.symbol == '\t') {
+                printf("\\t");
+            } else {
+                printf("%c", man.symbol);
+            }
+            printf("'\tfrequency:\t\t%lu\tcodeword:%s\n", man.frequency, man.codeword);
+        }
     }
 
 }
