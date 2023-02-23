@@ -47,8 +47,8 @@
 int read_symbols(size_t maxcount, Symbol syms[]) {
     size_t pos = 0;
     char present;
+    /// for some reason, this is causing a core segmentation dump. why?
     while ((present = fgetc(stdin)) != NUL) {
-        
         /// If the current character has been seen before
         int exists = 0;
 
