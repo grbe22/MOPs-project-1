@@ -1,0 +1,53 @@
+commit e7a551b87ea8255b41010134bee6c648b185cdbb
+Author: Gabriel W Rippel <gwr3294@cs.rit.edu>
+Date:   Thu Feb 23 11:12:57 2023 -0500
+
+    finished.
+
+commit 1fb32a1cea7eeccc978e6580e452afaf9f6e98bf
+Author: Gabriel W Rippel <gwr3294@cs.rit.edu>
+Date:   Thu Feb 23 10:52:45 2023 -0500
+
+    finished printing necessary values. Polishing only part that remains. :)
+
+commit c71517465a37c86cf410d4dd74f016aa57caecc9
+Author: Gabriel W Rippel <gwr3294@cs.rit.edu>
+Date:   Thu Feb 23 10:34:08 2023 -0500
+
+    updated VLC to properly print out the first part of the assignment.
+
+commit 00410763ac9a0641cd7b3564a0bd70fd98182f59
+Author: Gabriel W Rippel <gwr3294@cs.rit.edu>
+Date:   Thu Feb 23 10:33:30 2023 -0500
+
+    various fixes, implementations, and updates to bring node_heap.c to proper standard.
+
+commit d82d86173bb67f7cd213a6effac4d32c03e66c9d
+Author: Gabriel W Rippel <gwr3294@cs.rit.edu>
+Date:   Thu Feb 23 08:17:59 2023 -0500
+
+    fixed read_symbols overreaching, assorted problems. next solution should be simple.
+
+commit ef6c46764cda7a2c8246fb40936d9228f20060db
+Author: Gabriel W Rippel <gwr3294@cs.rit.edu>
+Date:   Wed Feb 22 19:49:49 2023 -0500
+
+    error detected: core segmentation fault. Unknown how to fix.
+
+commit 1abba66e40ab2a88606681421bca3edc6631fe33
+Author: Gabriel W Rippel <gwr3294@cs.rit.edu>
+Date:   Wed Feb 22 19:10:53 2023 -0500
+
+    basic start of the VLC application as I understand it.
+
+commit c5ba39270801bf0ed641d9040f660414a47389f9
+Author: Gabriel W Rippel <gwr3294@cs.rit.edu>
+Date:   Wed Feb 22 17:29:17 2023 -0500
+
+    undid several crusty layers of errors. fixed bugs & problems. Functions work as described now.
+
+commit 2767830234626efdbe13c54d2933f73ff7554de8
+Author: Gabriel W Rippel <gwr3294@cs.rit.edu>
+Date:   Tue Feb 21 10:28:00 2023 -0500
+
+    rough draft complete. No checks made.

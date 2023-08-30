@@ -1,0 +1,33 @@
+
+Assignment Feedback
+
+My name is: Gabe Rippel
+My login ID is: gwr3294
+
+Assignment name is: Project1
+
+
+What did I learn?
+    I learned a lot about the fine details of c, how to properly print variables and numbers, and how to link files through compilation in gcc and headers.
+
+
+
+What was easy about this assignment?
+    A few of the functions were rather simple; once I had node_heap.c done, VLC.c didn't take too long. It was just using the functions I already created to do something self-explanitory.
+
+
+
+What gave you problems/troubles?
+    Understanding the basics behind nodes & heaps. It took me a while to understand how the data types worked and interacted with each other. It's obvious now, but it took me a long while to understand how they interacted and reacted with one another.
+
+
+
+What can the instructor do to improve this assignment?
+    It wasn't necessarily clear how to start. I had to get a lot of help just to get the ball rolling on the assignment, but it was simple afterwords. If I had a general idea - like a tutorial on how to start the assignment, or a starter file for VLC.c, it would've taken me much less time to complete the project.
+
+
+
+What would you have liked to do in this assignment?
+    I think it would be neat to do the actual proper encoding so that it can be decoded later. We learned the theory in my high school CS class, and it could be like 10x as difficult, but the final implementation wasn't that hard. Right now we just created something that no one could realistically ever use.
+
+
